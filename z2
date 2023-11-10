@@ -1,0 +1,95 @@
+DROP DATABASE mydb;
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `mydb` DEFAULT CHARACTER SET utf8 ;
+USE `mydb` ;
+
+-- -----------------------------------------------------
+-- Table `mydb`.`client`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`client` (
+  `id` INT NOT NULL,
+  `name` VARCHAR(45) NOT NULL,
+  `surname` VARCHAR(45) NOT NULL,
+  `phone` CHAR(9) NOT NULL,
+  `adress` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`pizza`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`pizza` (
+  `id` INT NOT NULL,
+  `flavour` VARCHAR(45) NOT NULL,
+  `size` ENUM('small', 'big') NOT NULL,
+  `price` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`order`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`order` (
+  `id` INT NOT NULL,
+  `date` DATETIME NOT NULL,
+  `pizza_id` INT NOT NULL,
+  `client_id` INT NOT NULL,
+  PRIMARY KEY (`id`, `pizza_id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC),
+  INDEX `fk_purchase_pizza_idx` (`pizza_id` ASC),
+  INDEX `fk_purchase_employee1_idx` (`client_id` ASC),
+  CONSTRAINT `fk_purchase_pizza`
+    FOREIGN KEY (`pizza_id`)
+    REFERENCES `mydb`.`pizza` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_purchase_employee1`
+    FOREIGN KEY (`client_id`)
+    REFERENCES `mydb`.`client` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
+INSERT INTO `mydb`.`client` (`id`, `name`, `surname`, `phone`, `adress`) VALUES
+(1, 'Jakub', 'Kowalski', '603822933', 'Reja 1'),
+(2, 'Jan', 'Nowak', '789262839', 'Partyzantow 14/7'),
+(3, 'Wlodek', 'Markowicz', '603819374', 'Kosynierow Gdynskich 7');
+
+INSERT INTO `mydb`.`pizza` (`id`, `flavour`, `size`, `price`) VALUES
+(1, 'margherita', 'small', 39),
+(2, 'pepperoni', 'big', 59),
+(3, 'vegetarian', 'small', 49);
+
+INSERT INTO `mydb`.`order` (`id`, `date`, `pizza_id`, `client_id`) VALUES
+(101, '2023-01-01 12:00:17', 1, 1),
+(102, '2023-01-02 13:30:50', 2, 2),
+(103, '2023-01-03 15:45:39', 3, 3);
+
+UPDATE pizza SET price = 29 WHERE id = 1;
+
+DELETE FROM `order` WHERE id = 103;
+
+SELECT * FROM `mydb`.`order`;
+SELECT * FROM `mydb`.`pizza`;
+SELECT * FROM `mydb`.`client`;
