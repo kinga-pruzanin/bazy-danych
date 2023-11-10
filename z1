@@ -1,0 +1,121 @@
+DROP DATABASE mydb;
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `mydb` DEFAULT CHARACTER SET utf8 ;
+USE `mydb` ;
+
+-- -----------------------------------------------------
+-- Table `mydb`.`shop`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`shop` (
+  `id` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`employee`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`employee` (
+  `id` INT NOT NULL,
+  `shop_id` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC),
+  INDEX `fk_employee_shop1_idx` (`shop_id` ASC),
+  CONSTRAINT `fk_employee_shop1`
+    FOREIGN KEY (`shop_id`)
+    REFERENCES `mydb`.`shop` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`product`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`product` (
+  `id` INT NOT NULL,
+  `name` VARCHAR(45) NOT NULL,
+  `type` VARCHAR(45) NOT NULL,
+  `price` INT NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `mydb`.`purchase`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `mydb`.`purchase` (
+  `id` INT NOT NULL,
+  `date` DATE NOT NULL,
+  `product_id` INT NOT NULL,
+  `employee_id` INT NOT NULL,
+  INDEX `fk_purchase_product1_idx` (`product_id` ASC),
+  INDEX `fk_purchase_employee1_idx` (`employee_id` ASC),
+  PRIMARY KEY (`id`, `product_id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC),
+  CONSTRAINT `fk_purchase_product1`
+    FOREIGN KEY (`product_id`)
+    REFERENCES `mydb`.`product` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_purchase_employee1`
+    FOREIGN KEY (`employee_id`)
+    REFERENCES `mydb`.`employee` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
+INSERT INTO `mydb`.`shop` (`id`) VALUES
+(1),
+(2),
+(3),
+(4);
+
+INSERT INTO `mydb`.`employee` (`id`, `shop_id`) VALUES
+(101, 4),
+(102, 1),
+(103, 2),
+(104, 3),
+(105, 3);
+
+INSERT INTO `mydb`.`product` (`id`, `name`, `type`, `price`) VALUES
+(201, 'PlayStation 5', 'console', 3000),
+(202, 'Sony', 'headphones', 600),
+(203, 'AirPods Max', 'headphones', 2000),
+(204, 'Steam Deck', 'console', 1900),
+(205, 'Sony', 'controller', 250);
+
+INSERT INTO `mydb`.`purchase` (`id`, `date`, `product_id`, `employee_id`) VALUES
+(301, '2023-01-01', 201, 101),
+(302, '2023-01-02', 202, 102),
+(303, '2023-01-03', 203, 103),
+(304, '2023-01-04', 204, 104),
+(305, '2023-01-05', 205, 105);
+
+UPDATE product SET price = 5000 WHERE id = 201;
+
+DELETE FROM purchase WHERE id = 304;
+
+SELECT * FROM `mydb`.`product`;
+SELECT * FROM `mydb`.`purchase`;
+SELECT * FROM `mydb`.`employee`;
+SELECT * FROM `mydb`.`shop`;
